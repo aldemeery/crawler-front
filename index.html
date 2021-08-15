@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crawler</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/dark.css">
+    <style>
+        a{cursor:pointer}.loader{border:8px solid #f3f3f3;border-radius:50%;border-top:8px solid grey;width:60px;height:60px;-webkit-animation:spin 2s linear infinite;animation:spin 2s linear infinite}@-webkit-keyframes spin{0%{-webkit-transform:rotate(0)}100%{-webkit-transform:rotate(360deg)}}@keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}.loader-container{display:flex;justify-content:center;margin-top:75px}
+    </style>
+</head>
+<body>
+    <div style="display: flex; height: 335px;">
+        <div>
+            <h1 style="width: 240px;">Crawler</h1>
+            <img src="https://emojipedia-us.s3.amazonaws.com/source/skype/289/spider_1f577-fe0f.png" alt="">
+        </div>
+        <div style="flex-grow: 1;">
+            <form action="https://crawler-age.herokuapp.com/api.php" method="get" onsubmit="submitForm(event)">
+                <input type="url" name="url" id="url" style="width: 100%; margin-top: 25px;" placeholder="https://example.com" required>
+                <input type="submit" value="Crawl">
+            </form>
+            <div class="loader-container" style="display: none;">
+                <div class="loader"></div>
+            </div>
+            <table style="margin-top: 25px; display: none;" id="info">
+                <tr>
+                    <th>Pages Crawled</th>
+                    <td id="pages">3</td>
+                    <th>Avg. Load Time</th>
+                    <td id="load">3 ms</td>
+                </tr>
+                <tr>
+                    <th>Internal Links</th>
+                    <td id="in-links">3</td>
+                    <th>Avg. Word Count</th>
+                    <td id="words">3</td>
+                </tr>
+                <tr>
+                    <th>External Links</th>
+                    <td id="ex-links">3</td>
+                    <th>Avg. Title Length</th>
+                    <td id="title">3</td>
+                </tr>
+                <tr>
+                    <th>Images</th>
+                    <td id="images">3</td>
+                    <th></th>
+                    <td></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <hr />
+    <div class="loader-container" style="display: none;">
+        <div class="loader"></div>
+    </div>
+    <table id="pages-table" style="display: none;">
+        <tr>
+            <th style="width: 70%;">URL</th>
+            <th>Status Code</th>
+            <th>Load Time</th>
+        </tr>
+    </table>
+    <script>
+        function submitForm(e){e.preventDefault();const t=document.getElementsByClassName("loader-container");for(const e of t)e.style.display="flex";const n=document.getElementById("pages-table"),l=document.getElementById("info");n.style.display="none",l.style.display="none";const d=document.getElementById("url").value;fetch(`https://crawler-age.herokuapp.com/api.php?url=${d}`).then(e=>e.json()).then(e=>{for(const e of t)e.style.display="none";for(document.getElementById("pages").innerHTML=e.numberOfPagesCrawled,document.getElementById("load").innerHTML=e.avgLoad+" ms",document.getElementById("in-links").innerHTML=e.numberOfInternalLinks,document.getElementById("words").innerHTML=e.avgWordCount,document.getElementById("ex-links").innerHTML=e.numberOfExternalLinks,document.getElementById("title").innerHTML=e.avgTitleLength,document.getElementById("images").innerHTML=e.numberOfImages,l.style.display="table";n.rows.length>1;)n.deleteRow(1);e.pages.forEach(e=>{let t=document.createElement("tr"),l=document.createElement("td"),d=document.createElement("a");d.setAttribute("href",e.url),d.setAttribute("target","_blank"),d.innerHTML=e.url,l.append(d);let o=document.createElement("td");o.innerHTML=e.statusCode;let s="white";e.statusCode<300&&e.statusCode>199?s="green":e.statusCode<500&&e.statusCode>399?s="orange":e.statusCode<600&&e.statusCode>499&&(s="red"),o.style.color=s;let a=document.createElement("td");a.innerHTML=e.loadTime+" ms",t.append(l,o,a),n.getElementsByTagName("tbody")[0].append(t)}),n.style.display="table"})}
+    </script>
+</body>
+</html>
